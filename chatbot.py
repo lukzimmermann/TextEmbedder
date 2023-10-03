@@ -2,7 +2,7 @@ import openai
 from src import embeddingOpenAI
 from src import postgres
 
-userPrompt = "Wie funktioniert der chinesischer Restsatz"
+userPrompt = "Welche Unendlichkeit sind abzählbar"
 
 dataSet = embeddingOpenAI.createEmbedding(userPrompt)
 
@@ -63,9 +63,9 @@ documents = getTextFromDataBase(dataSet.vector)
 context = ""
 
 sourceCounter = 1
-context += "Das sind verschiedene Quellen auf die dich referenzieren sollst:\n\n"
+context += "Das sind verschiedene Quellen auf die dich referenzieren sollst. Falls du diese Quellen verwendest, gibt den Namen und die page an auf die du dich referenzierst\n\n"
 for doc in documents:
-    context += f"Quelle: {sourceCounter}\nDocument: {doc.name}\nPage: {doc.page+1}\nText: {doc.text}\n\n\n"
+    context += f"Quelle: {sourceCounter}\nDocument: {doc.name}\nPage: {doc.page+1}\nTags: {doc.tags}\nText: {doc.text}\n\n\n"
     sourceCounter += 1
 
 
@@ -73,6 +73,9 @@ prompt = f"""
 {context}
 UserPromt: {userPrompt}
 """
+
+for doc in documents:
+    print(f"Document: {doc.name}\nPage: {doc.page}\nTags: {doc.tags}\nText: {doc.text}\n\n")
 
 response = openai.ChatCompletion.create(
     model="gpt-3.5-turbo",
@@ -85,5 +88,3 @@ print("Prompt: ", userPrompt)
 print("")
 print({response["choices"][0]["message"]["content"]})
 
-#for doc in documents:
-#    print(f"Document: {doc.name}\nPage: {doc.page}\nText: {doc.text}\n\n")

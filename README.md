@@ -58,7 +58,7 @@ CREATE TABLE document (
 	id SERIAL PRIMARY KEY,
 	filename TEXT,
 	path TEXT,
-	last_modified_date TIMESTAMP
+	last_modified_date INTEGER
 );
 
 CREATE TABLE tag (
