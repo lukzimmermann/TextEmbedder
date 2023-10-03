@@ -4,7 +4,7 @@ Creates embeddings using [text-embedding-ada-002](https://openai.com/blog/new-an
 
 This allows to find the relevant pages of all scanned PDF's via a prompt.
 
-## Verwendung
+## How to use
 
 Below is a brief explanation of how the project can be used.
 
