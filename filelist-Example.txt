@@ -1,0 +1,2 @@
+data
+/Users/lukas/Documents/LocalProjects/Artificial Intelligence/P02_2048/__pycache__
