@@ -1,8 +1,20 @@
 import openai
+import argparse
 from src import embeddingOpenAI
 from src import postgres
+from dotenv import load_dotenv
 
-userPrompt = "Welche Unendlichkeit sind abzählbar"
+# Load environment variables from .env file
+load_dotenv()
+
+parser = argparse.ArgumentParser(description='Can be used to create embedding or create a prompt')
+parser.add_argument('-m', '--message', type=str, help='To pass a prompt')
+
+args = parser.parse_args()
+
+userPrompt = 'Wie hoch ist der Eiffelturm?'
+if args.message:
+    userPrompt = args.message
 
 dataSet = embeddingOpenAI.createEmbedding(userPrompt)
 
@@ -42,7 +54,7 @@ def getTextFromDataBase(vector):
                     FROM embedding
                     JOIN document ON id = doc_id
                     ORDER BY embedding_ada002 <-> %s::vector 
-                    LIMIT 5;""",
+                    LIMIT 10;""",
                     data)
     pg.disconnect()
 
@@ -63,9 +75,10 @@ documents = getTextFromDataBase(dataSet.vector)
 context = ""
 
 sourceCounter = 1
-context += "Das sind verschiedene Quellen auf die dich referenzieren sollst. Falls du diese Quellen verwendest, gibt den Namen und die page an auf die du dich referenzierst\n\n"
+context += """Das sind verschiedene Quellen auf die dich referenzieren sollst. 
+Falls du diese Quellen verwendest, vermerke das am Schluss des Satzes wie folgt:(Quelle: {DOCUMENT}, Seite {PAGE})\n\n"""
 for doc in documents:
-    context += f"Quelle: {sourceCounter}\nDocument: {doc.name}\nPage: {doc.page+1}\nTags: {doc.tags}\nText: {doc.text}\n\n\n"
+    context += f"NUMBER: {sourceCounter}\nDOCUMENT: {doc.name}\nPAGE: {doc.page+1}\nTAGS: {doc.tags}\nTEXT: {doc.text}\n\n\n"
     sourceCounter += 1
 
 
