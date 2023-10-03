@@ -24,7 +24,6 @@ def createEmbedding(text):
       input=text
     )
     dataSet.vector = np.array(response['data'][0]['embedding'])
-    dataSet.vector = np.array([3,4])
 
     return dataSet
   else:

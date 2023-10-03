@@ -9,6 +9,7 @@ def getPages(pdfFilename):
             text = pdf_reader.pages[page_number].extract_text()
             text = text.replace("\n", " ")
             text = text.replace("'", "")
+            text = text.replace('\x00', '')
             pages.append(text)
             
         return pages

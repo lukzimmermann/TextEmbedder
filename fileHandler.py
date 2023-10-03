@@ -42,9 +42,12 @@ class FileHandler:
     def getIdOfDocument(self, filename):
         pg = postgres.PostgresDB()
         pg.connect()
-        response = pg.selectQuery(f'SELECT id FROM document WHERE filename = \'{filename}\'')
+        data = (filename,)
+        response = pg.selectQuery(f"""SELECT id 
+                                  FROM document
+                                  WHERE filename = %s""", data)
         pg.disconnect()
-        if len(response) > 0:
+        if response is not None and len(response) > 0:
             return response[0][0]
         else:
             return -1
@@ -52,11 +55,13 @@ class FileHandler:
     def getLastModifiedDate(self, filename):
         pg = postgres.PostgresDB()
         pg.connect()
+        data = (filename,)
+        print(data)
         response = pg.selectQuery(f"""SELECT last_modified_date
                         FROM document
-                        WHERE filename = \'{filename}\'""")
+                        WHERE filename = %s""", data)
         pg.disconnect()
-        if len(response) > 0:
+        if response is not None and len(response) > 0:
             return response[0][0]
         else:
             return self.MAX_TIMESTAMP
@@ -69,10 +74,11 @@ class FileHandler:
                 tags = self.getTagsOfPath(file.path)
                 pg = postgres.PostgresDB()
                 pg.connect()
+                data = (file.name, file.path, file.lastModified)
                 pg.executeQuery(f"""INSERT INTO document
                                 (filename, path, last_modified_date)
-                                VALUES (\'{file.name}\',\'{file.path}\', {file.lastModified})
-                                RETURNING id""")
+                                VALUES (%s, %s, %s)
+                                RETURNING id""", data)
                 index = self.getIdOfDocument(file.name)
 
                 for tag in tags:
