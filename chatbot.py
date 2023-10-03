@@ -25,6 +25,7 @@ class Document:
         self.name = ''
         self.page = 0
         self.tags = []
+        self.dotProduct = 0
         self.text = 0
 
 def getTagsById(id):
@@ -47,14 +48,14 @@ def getTextFromDataBase(vector):
     pg = postgres.PostgresDB()
     pg.connect()
     vector = dataSet.vector.tolist() 
-    data = (vector,)
+    data = (vector,vector)
 
     response = pg.selectQuery(f"""
-                    SELECT doc_id, filename, doc_segment, doc_text
+                    SELECT doc_id, filename, doc_segment, embedding_ada002 <-> %s::vector AS distance, doc_text
                     FROM embedding
                     JOIN document ON id = doc_id
-                    ORDER BY embedding_ada002 <-> %s::vector 
-                    LIMIT 10;""",
+                    ORDER BY embedding_ada002 <-> %s::vector
+                    LIMIT 5;""",
                     data)
     pg.disconnect()
 
@@ -65,7 +66,8 @@ def getTextFromDataBase(vector):
         document.id = item[0]
         document.name = item[1]
         document.page = item[2]
-        document.text = item[3]
+        document.dotProduct = item[3]
+        document.text = item[4]
         document.tags = getTagsById(document.id)
         documents.append(document)
     
@@ -81,14 +83,13 @@ for doc in documents:
     context += f"NUMBER: {sourceCounter}\nDOCUMENT: {doc.name}\nPAGE: {doc.page+1}\nTAGS: {doc.tags}\nTEXT: {doc.text}\n\n\n"
     sourceCounter += 1
 
-
 prompt = f"""
 {context}
 UserPromt: {userPrompt}
 """
 
 for doc in documents:
-    print(f"Document: {doc.name}\nPage: {doc.page}\nTags: {doc.tags}\nText: {doc.text}\n\n")
+    print(f"Document: {doc.name}\nPage: {doc.page}\nDotProduct: {doc.dotProduct}\nTags: {doc.tags}\nText: {doc.text}\n\n")
 
 response = openai.ChatCompletion.create(
     model="gpt-3.5-turbo",
@@ -98,6 +99,5 @@ response = openai.ChatCompletion.create(
     ]
 )
 print("Prompt: ", userPrompt)
-print("")
+print()
 print({response["choices"][0]["message"]["content"]})
-

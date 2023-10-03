@@ -5,7 +5,7 @@ def getPages(pdfFilename):
     with open(pdfFilename, 'rb') as pdf_file:
         pdf_reader = PyPDF2.PdfReader(pdf_file)
 
-        for page_number in range(len(pdf_reader.pages) ):
+        for page_number in range(len(pdf_reader.pages)):
             text = pdf_reader.pages[page_number].extract_text()
             text = text.replace("\n", " ")
             text = text.replace("'", "")
