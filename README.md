@@ -16,7 +16,7 @@ Below is a brief explanation of how the project can be used.
 
 ### Install Postgres with pgvector
 
-The easiest way is to run postgres as docker. The image []`ankane/pgvector`](https://hub.docker.com/r/ankane/pgvector) has pgvector preinstalled.
+The easiest way is to run postgres as docker. The image [`ankane/pgvector`](https://hub.docker.com/r/ankane/pgvector) has pgvector preinstalled.
 
 ```bash
 docker run \
