@@ -21,7 +21,7 @@ Add one or more lines containing a path. The file must be in the root directory 
 
 ### .env
 
-A token for the OpenAI Api is required. Furthermore, the credentials for the database are stored here.
+A token for the OpenAI Api is required. Furthermore, the credentials for the database are stored also here.
 
 `.env`
 
@@ -38,17 +38,17 @@ DB_PORT = 5432
 
 ### createTables.sql
 
-By means of these queries the necessary tables can be created in the Postgres database.
+This query creates all necessary tables in the database.
 
 ```sql
 CREATE EXTENSION vector;
 
 CREATE TABLE embedding (
-    doc_id INTEGER,
+	doc_id INTEGER,
 	doc_segment INTEGER,
-    doc_text TEXT,
+	doc_text TEXT,
 	tokens INTEGER,
-    embedding_ada002 vector(1536)
+	embedding_ada002 vector(1536)
 );
 
 ALTER TABLE embedding
