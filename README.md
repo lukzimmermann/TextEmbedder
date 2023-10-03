@@ -8,6 +8,14 @@ This allows to find the relevant pages of all scanned PDF's via a prompt.
 
 Below is a brief explanation of how the project can be used.
 
+### Install Python dependencies
+
+Install all dependencies needed for this project:
+
+```bash
+pip install -r requirements.txt
+```
+
 ### Filelist File
 
 Add one or more lines containing a path. The file must be in the root directory of the project. Below is an example:
