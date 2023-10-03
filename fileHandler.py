@@ -66,17 +66,31 @@ class FileHandler:
             index = self.getIdOfDocument(file.name)
             lastModifiedInDataBase = self.getLastModifiedDate(file.name)
             if index == -1 or lastModifiedInDataBase < file.lastModified:
+                tags = self.getTagsOfPath(file.path)
                 pg = postgres.PostgresDB()
                 pg.connect()
                 pg.executeQuery(f"""INSERT INTO document
                                 (filename, path, last_modified_date)
                                 VALUES (\'{file.name}\',\'{file.path}\', {file.lastModified})
                                 RETURNING id""")
+                index = self.getIdOfDocument(file.name)
+
+                for tag in tags:
+                    data = (index, tag)
+                    pg.executeQuery(f"""INSERT INTO tag
+                                    (doc_id, tag)
+                                    VALUES (%s, %s)""", data)
                 pg.disconnect()
 
-                index = self.getIdOfDocument(file.name)
-                print(index)
+                
             else:
                 file.isUpToDate = True
             
             file.id = index
+    
+    def getTagsOfPath(self, path):
+        tags = []
+        parts = path.split('/')
+        if len(parts) > 1:
+            tags = parts[1:]
+        return tags

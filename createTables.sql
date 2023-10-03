@@ -18,3 +18,10 @@ CREATE TABLE document (
 	last_modified_date TIMESTAMP
 );
 
+CREATE TABLE tag (
+	doc_id INTEGER NOT NULL,
+	tag TEXT NOT NULL
+);
+
+ALTER TABLE tag
+ADD CONSTRAINT pk_tag PRIMARY KEY (doc_id,tag);
